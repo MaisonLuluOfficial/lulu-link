@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GTLulu</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Grand Theft Lulu: alle Kanäle von Lulu auf einen Blick. YouTube, TikTok, Instagram, Facebook, Malbuch und Kooperationen.">
+<meta property="og:title" content="Grand Theft Lulu">
+<meta property="og:description" content="Lulu. Krime City. Alle Kanäle auf einen Blick.">
+<meta property="og:image" content="logo.webp">
+<meta name="theme-color" content="#1a0f1f">
+<link rel="icon" href="logo.webp" type="image/webp">
+<style>
+/* Layout: eine Spalte wie ein Spielmenü, HUD-Uhr oben rechts, Einträge als Menüzeilen */
+@font-face { font-family: "Bowlby One"; src: url("BowlbyOne.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Archivo"; src: url("Archivo.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+:root {
+  --plum: #1a0f1f;        /* Grund: dunkles Pflaume-Glas */
+  --glass: #2a1830;       /* Menüzeile */
+  --glass-hi: #3a2142;    /* Menüzeile aktiv */
+  --ink: #fbf3f8;         /* Text */
+  --muted: #b9a6bf;       /* Nebentext */
+  --pink: #ff4fb8;        /* Glow / Leben */
+  --orange: #ff9a3c;      /* Akzent */
+  --gold: #ffd23f;        /* Geld */
+  --f-display: "Bowlby One", "Arial Black", Impact, sans-serif;
+  --f-ui: "Archivo", "Arial Narrow", Arial, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--plum); }
+body {
+  margin: 0; min-height: 100vh; color: var(--ink); font-family: var(--f-ui); font-weight: 700;
+  background:
+    radial-gradient(120% 60% at 50% -10%, color-mix(in srgb, var(--pink) 28%, transparent), transparent 60%),
+    radial-gradient(90% 50% at 50% 110%, color-mix(in srgb, var(--orange) 18%, transparent), transparent 60%),
+    var(--plum);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 32px;
+}
+.wrap { max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+
+.hud { align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.clock { font-family: var(--f-display); font-size: 22px; letter-spacing: .02em; text-shadow: 0 0 10px color-mix(in srgb, var(--pink) 70%, transparent), 0 2px 0 #000; font-variant-numeric: tabular-nums; }
+.bar { width: 108px; height: 6px; border-radius: 1px; background: color-mix(in srgb, var(--ink) 14%, transparent); overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,.55); }
+.bar > i { display: block; height: 100%; }
+.bar.health > i { width: 92%; background: var(--pink); box-shadow: 0 0 8px var(--pink); }
+.bar.armor > i { width: 64%; background: var(--ink); }
+
+header { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.logo { width: 128px; height: 128px; border-radius: 50%; box-shadow: 0 0 0 3px var(--ink), 0 0 26px color-mix(in srgb, var(--pink) 80%, transparent); }
+h1 { margin: 6px 0 0; font-family: var(--f-display); font-weight: 400; line-height: .95; font-size: clamp(34px, 10vw, 46px); text-wrap: balance; }
+h1 .gt { display: block; font-size: .5em; color: var(--ink); -webkit-text-stroke: 1px #3b1446; letter-spacing: .04em; }
+h1 .lulu { background: linear-gradient(90deg, var(--pink), var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 3px 0 #3b1446); }
+.tag { margin: 0; color: var(--muted); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
+
+nav { display: flex; flex-direction: column; gap: 10px; }
+.label { margin: 8px 0 0; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--orange); }
+a.row, div.row {
+  display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 14px;
+  padding: 14px 16px; border-radius: 4px; text-decoration: none; color: var(--ink);
+  background: color-mix(in srgb, var(--glass) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+  border-left: 3px solid transparent;
+  transition: background .15s, border-color .15s, transform .15s;
+}
+a.row:hover, a.row:focus-visible { background: var(--glass-hi); border-left-color: var(--orange); transform: translateX(3px); outline: none; }
+a.row:focus-visible { box-shadow: 0 0 0 2px var(--orange); }
+.ico { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.ico svg { width: 22px; height: 22px; fill: var(--ink); }
+.name { font-size: 17px; letter-spacing: .02em; min-width: 0; }
+.name small { display: block; font-size: 12px; color: var(--muted); letter-spacing: .04em; margin-top: 2px; overflow-wrap: anywhere; }
+.go { color: var(--orange); font-family: var(--f-display); font-size: 18px; }
+.soon { opacity: .75; }
+.chip { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--plum); background: var(--gold); padding: 4px 7px; border-radius: 2px; }
+
+footer { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+footer a { color: var(--muted); }
+footer a:hover { color: var(--ink); }
+@media (prefers-reduced-motion: reduce) { a.row { transition: none; } a.row:hover { transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hud" aria-hidden="true">
+    <div class="clock" id="clock">12:00</div>
+    <div class="bar health"><i></i></div>
+    <div class="bar armor"><i></i></div>
+  </div>
+
+  <header>
+    <img class="logo" src="logo.webp" width="128" height="128" alt="Lulu mit Cap, Logo von Grand Theft Lulu">
+    <h1><span class="gt">GRAND THEFT</span><span class="lulu">LULU</span></h1>
+    <p class="tag">Ein Labrador. Eine Stadt. Krime City.</p>
+  </header>
+
+  <nav aria-label="Kanäle">
+    <p class="label">Folge Lulu</p>
+    <a class="row" href="https://www.youtube.com/@MaisonLuluOfficial" target="_blank" rel="noopener">
+      <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5zM10 9v6l5-3z"/></svg></span>
+      <span class="name">YouTube<small>Lange Folgen und Shorts</small></span><span class="go">›</span>
+    </a>
+    <a class="row" href="https://www.tiktok.com/@maisonluluofficial" target="_blank" rel="noopener">
+      <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h3c.3 2 1.6 3.4 4 3.6v3c-1.5 0-2.9-.4-4-1.1V15a6 6 0 1 1-6-6v3.2a2.8 2.8 0 1 0 3 2.8z"/></svg></span>
+      <span class="name">TikTok<small>@maisonluluofficial</small></span><span class="go">›</span>
+    </a>
+    <a class="row" href="https://www.instagram.com/maisonluluofficial/" target="_blank" rel="noopener">
+      <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 3h9A4.5 4.5 0 0 1 21 7.5v9a4.5 4.5 0 0 1-4.5 4.5h-9A4.5 4.5 0 0 1 3 16.5v-9A4.5 4.5 0 0 1 7.5 3zm0 2A2.5 2.5 0 0 0 5 7.5v9A2.5 2.5 0 0 0 7.5 19h9a2.5 2.5 0 0 0 2.5-2.5v-9A2.5 2.5 0 0 0 16.5 5zM12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm4.6-3.4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg></span>
+      <span class="name">Instagram<small>@maisonluluofficial</small></span><span class="go">›</span>
+    </a>
+    <a class="row" href="https://www.facebook.com/maisonluluofficial" target="_blank" rel="noopener">
+      <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-7.5H16l.5-3h-3V8.7c0-.9.3-1.5 1.6-1.5H17V4.5c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2H8v3h2.6V21z"/></svg></span>
+      <span class="name">Facebook<small>Reels und Neuigkeiten</small></span><span class="go">›</span>
+    </a>
+
+    <p class="label">Shop</p>
+    <div class="row soon" aria-disabled="true">
+      <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4zm16 0h-5a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h5zM6 7v2h5V7zm0 4v2h5v-2z"/></svg></span>
+      <span class="name">GTLulu Malbuch<small>Ausmalen und Rätseln, ab 6 Jahren</small></span><span class="chip">Bald</span>
+    </div>
+
+    <p class="label">Business</p>
+    <a class="row" href="mailto:info@vadizon.de?subject=Kooperation%20Grand%20Theft%20Lulu">
+      <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5zm2 .9V17h14V7.4l-7 5.1z M6.4 7l5.6 4.1L17.6 7z"/></svg></span>
+      <span class="name">Kooperationen<small>info@vadizon.de</small></span><span class="go">›</span>
+    </a>
+  </nav>
+
+  <footer>
+    <span>© Vadizon</span>
+    <a href="datenschutz.html">Datenschutz</a>
+  </footer>
+</div>
+<script>
+(function () {
+  var el = document.getElementById("clock");
+  function tick() {
+    var d = new Date();
+    el.textContent = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  }
+  tick(); setInterval(tick, 15000);
+})();
+</script>
+</body>
+</html>
